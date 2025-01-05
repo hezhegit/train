@@ -91,17 +91,17 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.hezhe.train.member.domain.MemberExample">
-    delete from member
+    delete from `member`
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
   <insert id="insert" parameterType="com.hezhe.train.member.domain.Member">
-    insert into member (id, mobile)
+    insert into `member` (id, mobile)
     values (#{id,jdbcType=BIGINT}, #{mobile,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.hezhe.train.member.domain.Member">
-    insert into member
+    insert into `member`
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
