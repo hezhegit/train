@@ -23,6 +23,7 @@
     </developers>
     <modules>
         <module>train-member</module>
+        <module>train-conmmon</module>
     </modules>
     <scm>
         <connection/>
@@ -56,6 +57,13 @@
                 <artifactId>hutool-all</artifactId>
                 <version>5.8.10</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.hezhe</groupId>
+                <artifactId>train-conmmon</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>
