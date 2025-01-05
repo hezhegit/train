@@ -1,5 +1,7 @@
 package com.hezhe.train.member.controller;
 
+import com.hezhe.train.common.resp.Result;
+import com.hezhe.train.member.req.MemberRegisterReq;
 import com.hezhe.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +17,14 @@ public class MemberController {
     private MemberService memberService;
 
     @GetMapping("/count")
-    public Integer hello() {
-        return memberService.count();
+    public Result hello() {
+        int count = memberService.count();
+        return Result.ok().data("count", count);
     }
 
     @PostMapping("/register")
-    public long register(String mobile) {
-        return memberService.register(mobile);
-
+    public Result register(MemberRegisterReq req) {
+        long register = memberService.register(req);
+        return Result.ok().data("register", register);
     }
 }
