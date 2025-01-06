@@ -1,6 +1,8 @@
 package com.hezhe.train.common.controller;
 
+import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.Result;
+import com.hezhe.train.common.resp.ResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,20 +18,44 @@ public class ControllerExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     /**
-     * 所有异常统一处理
+     * 全局异常处理,没有指定异常的类型,不管什么异常都是可以捕获的
      * @param e
      * @return
      */
-    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(Exception.class)
     @ResponseBody
-    public Result exceptionHandler(Exception e) throws Exception {
-        // LOG.info("seata全局事务ID: {}", RootContext.getXID());
-        // // 如果是在一次全局事务里出异常了，就不要包装返回值，将异常抛给调用方，让调用方回滚事务
-        // if (StrUtil.isNotBlank(RootContext.getXID())) {
-        //     throw e;
-        // }
-        LOG.error("系统异常：", e);
+    public Result error(Exception e){
+        //e.printStackTrace();
+        LOG.error(e.getMessage());
         return Result.error().message("系统出现异常，请联系管理员");
+    }
+
+    /**
+     * 处理特定异常类型,可以定义多个,这里只以ArithmeticException为例
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(ArithmeticException.class)
+    @ResponseBody
+    public Result error(ArithmeticException e){
+        //e.printStackTrace();
+        LOG.error(e.getMessage());
+        return Result.error().code(ResultCode.ARITHMETIC_EXCEPTION.getCode())
+                .message(ResultCode.ARITHMETIC_EXCEPTION.getMessage());
+    }
+
+    /**
+     * 处理业务异常,我们自己定义的异常
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(BusinessException.class)
+    @ResponseBody
+    public Result error(BusinessException e){
+        //e.printStackTrace();
+        LOG.error(e.getErrMsg());
+        return Result.error().code(e.getCode())
+                .message(e.getErrMsg());
     }
 
 }

@@ -1,5 +1,7 @@
 package com.hezhe.train.member.service;
 
+import com.hezhe.train.common.exception.BusinessException;
+import com.hezhe.train.common.resp.ResultCode;
 import com.hezhe.train.member.domain.Member;
 import com.hezhe.train.member.domain.MemberExample;
 import com.hezhe.train.member.mapper.MemberMapper;
@@ -29,7 +31,7 @@ public class MemberService {
         List<Member> members = memberMapper.selectByExample(memberExample);
 
         if (!members.isEmpty()) {
-            throw new RuntimeException("手机号已注册！");
+            throw new BusinessException(ResultCode.USER_ACCOUNT_ALREADY_EXIST.getCode(), ResultCode.USER_ACCOUNT_ALREADY_EXIST.getMessage());
         }
 
         Member member = new Member();
