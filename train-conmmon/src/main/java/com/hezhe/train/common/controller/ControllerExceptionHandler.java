@@ -5,6 +5,7 @@ import com.hezhe.train.common.resp.Result;
 import com.hezhe.train.common.resp.ResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,6 +43,21 @@ public class ControllerExceptionHandler {
         LOG.error(e.getMessage());
         return Result.error().code(ResultCode.ARITHMETIC_EXCEPTION.getCode())
                 .message(ResultCode.ARITHMETIC_EXCEPTION.getMessage());
+    }
+
+
+    /**
+     * 处理特定异常类型,可以定义多个,这里只以ArithmeticException为例
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(BindException.class)
+    @ResponseBody
+    public Result error(BindException e){
+        //e.printStackTrace();
+        LOG.error("校验异常：{}", e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return Result.error().code(ResultCode.PARAM_VAL_ERROR.getCode())
+                .message(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
     }
 
     /**
