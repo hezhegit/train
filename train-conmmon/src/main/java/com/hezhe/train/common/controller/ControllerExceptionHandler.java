@@ -53,7 +53,7 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public Result error(BusinessException e){
         //e.printStackTrace();
-        LOG.error(e.getErrMsg());
+        LOG.error("业务异常：{}", e.getErrMsg());
         return Result.error().code(e.getCode())
                 .message(e.getErrMsg());
     }

@@ -14,4 +14,14 @@ public class BusinessException extends RuntimeException{
 
     // "错误信息"
     private String errMsg;
+
+
+    /**
+     * 不写入堆栈信息 提高性能
+     * @return
+     */
+    @Override
+    public synchronized Throwable fillInStackTrace() {
+        return this;
+    }
 }
