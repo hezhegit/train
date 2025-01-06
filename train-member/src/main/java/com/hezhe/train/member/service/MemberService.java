@@ -2,6 +2,7 @@ package com.hezhe.train.member.service;
 
 import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.ResultCode;
+import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.member.domain.Member;
 import com.hezhe.train.member.domain.MemberExample;
 import com.hezhe.train.member.mapper.MemberMapper;
@@ -36,7 +37,7 @@ public class MemberService {
 
         Member member = new Member();
         member.setMobile(mobile);
-        member.setId(System.currentTimeMillis());
+        member.setId(SnowUtil.getSnowflakeNextId());
         memberMapper.insert(member);
         return member.getId();
     }
