@@ -8,10 +8,7 @@ import com.hezhe.train.member.resp.MemberLoginResp;
 import com.hezhe.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/member")
@@ -27,19 +24,19 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public Result register(@Valid MemberRegisterReq req) {
+    public Result register(@Valid @RequestBody MemberRegisterReq req) {
         long register = memberService.register(req);
         return Result.ok().data("register", register);
     }
 
     @PostMapping("/send-code")
-    public Result sendCode(@Valid MemberSendCodeReq req) {
+    public Result sendCode(@Valid @RequestBody MemberSendCodeReq req) {
         memberService.sendCode(req);
         return Result.ok();
     }
 
     @PostMapping("/login")
-    public Result login(@Valid MemberLoginReq req) {
+    public Result login(@Valid @RequestBody MemberLoginReq req) {
         MemberLoginResp login = memberService.login(req);
         return Result.ok().data("user", login);
     }
