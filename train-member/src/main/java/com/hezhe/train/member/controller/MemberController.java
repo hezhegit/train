@@ -2,6 +2,7 @@ package com.hezhe.train.member.controller;
 
 import com.hezhe.train.common.resp.Result;
 import com.hezhe.train.member.req.MemberRegisterReq;
+import com.hezhe.train.member.req.MemberSendCodeReq;
 import com.hezhe.train.member.service.MemberService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -27,5 +28,11 @@ public class MemberController {
     public Result register(@Valid MemberRegisterReq req) {
         long register = memberService.register(req);
         return Result.ok().data("register", register);
+    }
+
+    @PostMapping("/send-code")
+    public Result sendCode(@Valid MemberSendCodeReq req) {
+        memberService.sendCode(req);
+        return Result.ok();
     }
 }
