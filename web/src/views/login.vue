@@ -43,6 +43,7 @@ import axios from "axios";
 import { notification } from 'ant-design-vue';
 // 所有路由：useRouter 当前路由信息获取：useRoute
 import { useRouter } from 'vue-router'
+import store from "@/store";
 
 export default defineComponent({
   name: "login-view",
@@ -72,6 +73,7 @@ export default defineComponent({
         let data = response.data;
         if (data.success) {
           notification.success({ description: '登录成功！' });
+          store.commit("setMember", data.data.user)
           router.push("/");
         } else {
           notification.error({ description: data.message });
