@@ -4,9 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.jwt.JWTUtil;
 import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.ResultCode;
+import com.hezhe.train.common.util.JwtUtil;
 import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.member.domain.Member;
 import com.hezhe.train.member.domain.MemberExample;
@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MemberService {
@@ -103,11 +102,14 @@ public class MemberService {
         // Payload（载荷信息）：存放实际传输的数据，比如用户信息
         // Signature（签名）：签名由上面两部分+密钥组成
 
-        // 载荷信息
-        Map<String, Object> stringObjectMap = BeanUtil.beanToMap(memberLoginResp);
-        // 密钥
-        String key = "ticket12306";
-        String token = JWTUtil.createToken(stringObjectMap, key.getBytes());
+//        // 载荷信息
+//        Map<String, Object> stringObjectMap = BeanUtil.beanToMap(memberLoginResp);
+//        // 密钥
+//        String key = "ticket12306";
+//        String token = JWTUtil.createToken(stringObjectMap, key.getBytes());
+
+        String token = JwtUtil.createToken(memberLoginResp.getId(), memberLoginResp.getMobile());
+
         memberLoginResp.setToken(token);
 
         return memberLoginResp;
