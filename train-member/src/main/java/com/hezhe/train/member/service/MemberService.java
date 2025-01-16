@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.jwt.JWTUtil;
 import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.ResultCode;
 import com.hezhe.train.common.util.SnowUtil;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MemberService {
@@ -95,7 +97,20 @@ public class MemberService {
             throw new BusinessException(ResultCode.USER_MOBILE_CODE_ERROR.getCode(), ResultCode.USER_MOBILE_CODE_ERROR.getMessage());
         }
 
-        return BeanUtil.copyProperties(memberDB, MemberLoginResp.class);
+        MemberLoginResp memberLoginResp = BeanUtil.copyProperties(memberDB, MemberLoginResp.class);
+        // JWT：Header.Payload.Signature
+        // Header：包含令牌的类型和签名算法的设置
+        // Payload（载荷信息）：存放实际传输的数据，比如用户信息
+        // Signature（签名）：签名由上面两部分+密钥组成
+
+        // 载荷信息
+        Map<String, Object> stringObjectMap = BeanUtil.beanToMap(memberLoginResp);
+        // 密钥
+        String key = "ticket12306";
+        String token = JWTUtil.createToken(stringObjectMap, key.getBytes());
+        memberLoginResp.setToken(token);
+
+        return memberLoginResp;
 
     }
 
