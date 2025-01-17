@@ -74,7 +74,7 @@ export default defineComponent({
         if (data.success) {
           notification.success({ description: '登录成功！' });
           store.commit("setMember", data.data.user)
-          router.push("/");
+          router.push("/welcome");
         } else {
           notification.error({ description: data.message });
         }

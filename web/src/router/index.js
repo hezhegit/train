@@ -13,7 +13,17 @@ const routes = [
     meta: {
       // 自定义变量
       loginRequire: true
-    }
+    },
+    children: [
+      {
+        path: 'welcome',
+        component: () => import('../views/main/welcome.vue'),
+      },
+    ]
+  },
+  {
+    path: '',
+    redirect: '/welcome'
   }
 ]
 
