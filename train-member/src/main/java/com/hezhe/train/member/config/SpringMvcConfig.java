@@ -1,5 +1,6 @@
 package com.hezhe.train.member.config;
 
+import com.hezhe.train.common.interceptor.LogInterceptor;
 import com.hezhe.train.common.interceptor.MemberInterceptor;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +13,14 @@ public class SpringMvcConfig implements WebMvcConfigurer {
    @Resource
    MemberInterceptor memberInterceptor;
 
+   @Resource
+   LogInterceptor logInterceptor;
+
    @Override
    public void addInterceptors(InterceptorRegistry registry) {
+
+       registry.addInterceptor(logInterceptor);
+
        // 路径不要包含context-path
        registry.addInterceptor(memberInterceptor)
                .addPathPatterns("/**")
