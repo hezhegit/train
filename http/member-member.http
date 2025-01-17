@@ -21,3 +21,10 @@ Content-Type: application/json
   "mobile": "15898459477",
   "code": "8888"
 }
+
+
+> {%
+    client.log(JSON.stringify(response.body));
+    client.log(JSON.stringify(response.body.data.user.token));
+    client.global.set("token", response.body.data.user.token);
+%}
