@@ -53,6 +53,8 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
+import {notification} from "ant-design-vue";
+import axios from "axios";
 
 export default defineComponent({
   name: "passenger-view",
@@ -98,6 +100,28 @@ export default defineComponent({
     }
     ];
 
+    const onAdd = () => {
+      passenger.value = {};
+      visible.value = true;
+    };
+
+    const handleOk = () => {
+      axios.post("/member/passenger/save", passenger.value).then((response) => {
+        let data = response.data;
+        if (data.success) {
+          notification.success({description: "保存成功！"});
+          visible.value = false;
+          // handleQuery({
+          //   page: pagination.value.current,
+          //   size: pagination.value.pageSize
+          // });
+        } else {
+          notification.error({description: data.message});
+        }
+      });
+    };
+
+
     return {
       PASSENGER_TYPE_ARRAY,
       passenger,
@@ -105,6 +129,8 @@ export default defineComponent({
       passengers,
       pagination,
       columns,
+      onAdd,
+      handleOk,
     };
   },
 });
