@@ -1,7 +1,6 @@
 package com.hezhe.train.member.req;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -11,7 +10,6 @@ public class PassengerSaveReq {
     // NotBlank：校验String类型
     // 其他选用NotNull
 
-    @NotNull(message = "【会员ID】不能为空")
     private Long memberId;
 
     @NotBlank(message = "【名字】不能为空")
