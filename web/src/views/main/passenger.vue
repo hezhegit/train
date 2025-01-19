@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import {defineComponent, onMounted, ref} from 'vue';
 import {notification} from "ant-design-vue";
 import axios from "axios";
 
@@ -75,8 +75,11 @@ export default defineComponent({
     const pagination = ref({
       total: 0,
       current: 1,
-      pageSize: 10,
+      pageSize: 2,
     });
+
+    // 可以防止用户不断点击提交 =》转圈圈效果
+    let loading = ref(false);
 
     const columns = [
     {
@@ -100,12 +103,14 @@ export default defineComponent({
     }
     ];
 
+
     const onAdd = () => {
       passenger.value = {};
       visible.value = true;
     };
 
     const handleOk = () => {
+      passenger.value.type = 1
       axios.post("/member/passenger/save", passenger.value).then((response) => {
         let data = response.data;
         if (data.success) {
@@ -121,6 +126,62 @@ export default defineComponent({
       });
     };
 
+    const handleTableChange = (pagination) => {
+      // console.log("看看自带的分页参数都有啥：" + pagination);
+      handleQuery({
+        page: pagination.current,
+        size: pagination.pageSize
+      });
+    };
+
+    const handleQuery = (param) => {
+      if (!param) {
+        param = {
+          page: 1,
+          size: pagination.value.pageSize
+        };
+      }
+      loading.value = true;
+      axios.get("/member/passenger/query-list", {
+        params: {
+          page: param.page,
+          size: param.size
+        }
+      }).then((response) => {
+        loading.value = false;
+        let data = response.data;
+        if (data.success) {
+          data = data.data
+          // 如果 passengers时是reactive 不是ref的话 = 会使响应变量失效，需要采用 passengers.push(...data.content.list)
+          passengers.value = data.content.list;
+          // 设置分页控件的值
+          pagination.value.current = param.page;
+          pagination.value.total = data.content.total;
+        } else {
+          notification.error({description: data.message});
+        }
+      });
+    };
+
+    const onDelete = (record) => {
+      console.log(record)
+    };
+
+    const onEdit = (record) => {
+      // passenger.value = window.Tool.copy(record);
+      console.log(record)
+      visible.value = true;
+    };
+
+    onMounted(() => {
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
+      });
+    });
+
+
+
 
     return {
       PASSENGER_TYPE_ARRAY,
@@ -131,6 +192,11 @@ export default defineComponent({
       columns,
       onAdd,
       handleOk,
+      handleTableChange,
+      loading,
+      handleQuery,
+      onDelete,
+      onEdit
     };
   },
 });
