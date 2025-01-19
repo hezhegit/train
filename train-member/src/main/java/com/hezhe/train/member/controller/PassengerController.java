@@ -1,6 +1,7 @@
 package com.hezhe.train.member.controller;
 
 import com.hezhe.train.common.context.LoginMemberContext;
+import com.hezhe.train.common.resp.PageResp;
 import com.hezhe.train.common.resp.Result;
 import com.hezhe.train.member.req.PassengerQueryReq;
 import com.hezhe.train.member.req.PassengerSaveReq;
@@ -9,8 +10,6 @@ import com.hezhe.train.member.service.PassengerService;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/passenger")
@@ -29,7 +28,7 @@ public class PassengerController {
     @GetMapping("/query-list")
     public Result queryList(@Valid PassengerQueryReq req) {
         req.setMemberId(LoginMemberContext.getId());
-        List<PassengerQueryResp> list = passengerService.queryList(req);
-        return Result.ok().data("list", list);
+        PageResp<PassengerQueryResp> passengerQueryRespPageResp = passengerService.queryList(req);
+        return Result.ok().data("content", passengerQueryRespPageResp);
     }
 }
