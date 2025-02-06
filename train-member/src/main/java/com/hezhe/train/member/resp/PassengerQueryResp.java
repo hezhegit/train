@@ -1,12 +1,17 @@
 package com.hezhe.train.member.resp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import java.util.Date;
 
 public class PassengerQueryResp {
+    // 解决前后端交互Long类型精度丢失的问题
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long memberId;
 
     private String name;
