@@ -59,7 +59,7 @@ import axios from "axios";
 export default defineComponent({
   name: "passenger-view",
   setup() {
-    const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
+    let PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
     const visible = ref(false);
     let passenger = ref({
       id: undefined,
@@ -103,6 +103,8 @@ export default defineComponent({
     }
     ];
 
+    PASSENGER_TYPE_ARRAY = [{code:"1",desc:"成人"},{code:"2",desc:"儿童"},{code:"3",desc:"学生"}];
+
 
     const onAdd = () => {
       passenger.value = {};
@@ -116,10 +118,10 @@ export default defineComponent({
         if (data.success) {
           notification.success({description: "保存成功！"});
           visible.value = false;
-          // handleQuery({
-          //   page: pagination.value.current,
-          //   size: pagination.value.pageSize
-          // });
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize
+          });
         } else {
           notification.error({description: data.message});
         }
@@ -168,8 +170,7 @@ export default defineComponent({
     };
 
     const onEdit = (record) => {
-      // passenger.value = window.Tool.copy(record);
-      console.log(record)
+      passenger.value = window.Tool.copy(record);
       visible.value = true;
     };
 
