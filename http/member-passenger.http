@@ -3,9 +3,9 @@ Content-Type: application/json
 token: {{token}}
 
 {
-  "name": "jun",
-  "idCard": "3333333333333",
-  "type": "1"
+  "name": "jack",
+  "idCard": "90399300212",
+  "type": "2"
 }
 
 ###
@@ -15,3 +15,14 @@ token: {{token}}
 
 
 ###
+POST http://localhost:8000/member/passenger/save
+Content-Type: application/json
+token: {{token}}
+
+{
+  "id": 1887414520972972032,
+  "memberId": 1877638688578605056,
+  "name": "jack2222",
+  "idCard": "90399300212",
+  "type": "2"
+}
