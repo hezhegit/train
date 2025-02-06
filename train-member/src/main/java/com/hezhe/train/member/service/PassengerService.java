@@ -75,4 +75,8 @@ public class PassengerService {
         pageResp.setList(passengerQueryResps);
         return pageResp;
     }
+
+    public void deleteById(Long id) {
+        passengerMapper.deleteByPrimaryKey(id);
+    }
 }
