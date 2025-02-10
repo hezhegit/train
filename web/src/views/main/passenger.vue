@@ -11,6 +11,7 @@
            @change="handleTableChange"
            :loading="loading">
     <template #bodyCell="{ column, record }">
+<!--一些列需要单独处理  使用到template    -->
       <template v-if="column.dataIndex === 'operation'">
         <a-space>
           <a-popconfirm
@@ -59,7 +60,7 @@ import axios from "axios";
 export default defineComponent({
   name: "passenger-view",
   setup() {
-    let PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY;
+    const PASSENGER_TYPE_ARRAY = window.PASSENGER_TYPE_ARRAY
     const visible = ref(false);
     let passenger = ref({
       id: undefined,
@@ -102,8 +103,6 @@ export default defineComponent({
       dataIndex: 'operation'
     }
     ];
-
-    PASSENGER_TYPE_ARRAY = [{code:"1",desc:"成人"},{code:"2",desc:"儿童"},{code:"3",desc:"学生"}];
 
 
     const onAdd = () => {
@@ -166,6 +165,18 @@ export default defineComponent({
     };
 
     const onDelete = (record) => {
+      axios.delete("/member/passenger/delete/" + record.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          notification.success({description: "删除成功！"});
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          notification.error({description: data.message});
+        }
+      });
       console.log(record)
     };
 
