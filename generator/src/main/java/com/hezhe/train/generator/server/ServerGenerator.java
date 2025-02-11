@@ -19,13 +19,14 @@ public class ServerGenerator {
 
     public static void main(String[] args) throws DocumentException {
 
-        SAXReader saxReader = new SAXReader();
-        Map<String, String> map = new HashMap<>();
-        map.put("pom", "http://maven.apache.org/POM/4.0.0");
-        saxReader.getDocumentFactory().setXPathNamespaceURIs(map);
-        Document document = saxReader.read(pomPath);
-        Node node = document.selectSingleNode("//pom:configurationFile");
-        System.out.println(node.getText());
+        String generatorPath = getGeneratorPath();
+
+        Document document = new SAXReader().read("generator/" + generatorPath);
+        Node table = document.selectSingleNode("//table");
+        System.out.println(table);
+        Node tableName = table.selectSingleNode("@tableName");
+        Node domainObjectName = table.selectSingleNode("@domainObjectName");
+        System.out.println(tableName.getText()+"/"+domainObjectName.getText());
 
 
 //        FreemarkerUtil.initConfig("test.ftl");
@@ -33,5 +34,16 @@ public class ServerGenerator {
 ////        param.put("basePackage", "com.hezhe.train.generator.server");
 //        param.put("domain", "Test");
 //        FreemarkerUtil.generator(toPath + "Test.java", param);
+    }
+
+    private static String getGeneratorPath() throws DocumentException {
+        SAXReader saxReader = new SAXReader();
+        Map<String, String> map = new HashMap<>();
+        map.put("pom", "http://maven.apache.org/POM/4.0.0");
+        saxReader.getDocumentFactory().setXPathNamespaceURIs(map);
+        Document document = saxReader.read(pomPath);
+        Node node = document.selectSingleNode("//pom:configurationFile");
+        System.out.println(node.getText());
+        return node.getText();
     }
 }
