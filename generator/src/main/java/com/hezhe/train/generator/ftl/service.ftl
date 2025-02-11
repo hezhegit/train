@@ -5,7 +5,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hezhe.train.common.context.LoginMemberContext;
+<#--import com.hezhe.train.common.context.LoginMemberContext;-->
 import com.hezhe.train.common.resp.PageResp;
 import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.${module}.domain.${Domain};
@@ -35,7 +35,7 @@ public class ${Domain}Service {
 
         if (ObjectUtil.isNull(req.getId())) {
             // 新增
-            ${domain}.setMemberId(LoginMemberContext.getId());
+<#--            ${domain}.setMemberId(LoginMemberContext.getId());-->
             ${domain}.setId(SnowUtil.getSnowflakeNextId());
             ${domain}.setCreateTime(now);
             ${domain}.setUpdateTime(now);
@@ -57,9 +57,9 @@ public class ${Domain}Service {
         // id 倒序
         example.setOrderByClause("id desc");
         ${Domain}Example.Criteria criteria = example.createCriteria();
-        if (ObjectUtil.isNotNull(req.getMemberId())) {
-            criteria.andMemberIdEqualTo(req.getMemberId());
-        }
+<#--        if (ObjectUtil.isNotNull(req.getMemberId())) {-->
+<#--            criteria.andMemberIdEqualTo(req.getMemberId());-->
+<#--        }-->
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
         PageHelper.startPage(req.getPage(), req.getSize());
