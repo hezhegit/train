@@ -1,6 +1,10 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo" />
+    <div class="logo">
+      <router-link to="/welcome" style="color: white; font-size: 18px">
+        车票售卖平台
+      </router-link>
+    </div>
     <div style="float: right; color: white;">
       您好：{{member.mobile}} &nbsp;&nbsp;
       <router-link to="/login">
@@ -74,3 +78,14 @@ export default defineComponent({
 });
 </script>
 
+
+
+<style scoped>
+.logo {
+  float: left;
+  height: 31px;
+  width: 150px;
+  color: white;
+  font-size: 20px;
+}
+</style>
