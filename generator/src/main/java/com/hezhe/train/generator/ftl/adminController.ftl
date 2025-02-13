@@ -1,4 +1,4 @@
-package com.hezhe.train.${module}.controller;
+package com.hezhe.train.${module}.controller.admin;
 
 import com.hezhe.train.common.context.LoginMemberContext;
 import com.hezhe.train.common.resp.PageResp;
@@ -12,8 +12,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/${do_main}")
-public class ${Domain}Controller {
+@RequestMapping("/admin/${do_main}")
+public class ${Domain}AdminController {
 
     @Resource
     private ${Domain}Service ${domain}Service;

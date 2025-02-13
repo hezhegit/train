@@ -1,4 +1,4 @@
-package com.hezhe.train.business.controller;
+package com.hezhe.train.business.controller.admin;
 
 import com.hezhe.train.business.req.StationQueryReq;
 import com.hezhe.train.business.req.StationSaveReq;
@@ -11,8 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/station")
-public class StationController {
+@RequestMapping("/admin/station")
+public class StationAdminController {
 
     @Resource
     private StationService stationService;
