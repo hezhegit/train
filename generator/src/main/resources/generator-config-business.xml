@@ -41,8 +41,8 @@
                              targetPackage="com.hezhe.train.business.mapper"
                              type="XMLMAPPER"/>
 
-<!--        <table tableName="business" domainObjectName="business"/>-->
+        <table tableName="train_station" domainObjectName="TrainStation"/>
 <!--        <table tableName="station" domainObjectName="Station"/>-->
-        <table tableName="train" domainObjectName="Train"/>
+<!--        <table tableName="train" domainObjectName="Train"/>-->
     </context>
 </generatorConfiguration>

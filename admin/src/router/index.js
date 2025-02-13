@@ -10,12 +10,21 @@ const routes = [{
     path: 'about',
     component: () => import('../views/main/about.vue'),
   }, {
-    path: 'station',
-    component: () => import('../views/main/business/station.vue')
-  }, {
-    path: 'train',
-    component: () => import('../views/main/business/train.vue')
-  }
+    path: 'base',
+    children: [
+      {
+        path: 'station',
+        component: () => import('../views/main/business/station.vue')
+      }, {
+        path: 'train-station',
+        component: () => import('../views/main/business/train-station.vue')
+      },
+      {
+        path: 'train',
+        component: () => import('../views/main/business/train.vue')
+      }
+    ]
+  },
   ]
 }, {
     path: '',
