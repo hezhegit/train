@@ -2,6 +2,7 @@ package com.hezhe.train.generator.server;
 
 
 import cn.hutool.core.util.StrUtil;
+import com.hezhe.train.business.enums.SeatColEnum;
 import com.hezhe.train.business.enums.SeatTypeEnum;
 import com.hezhe.train.business.enums.TrainTypeEnum;
 import com.hezhe.train.member.enums.PassengerTypeEnum;
@@ -27,6 +28,7 @@ public class EnumGenerator {
             toJson(PassengerTypeEnum.class, bufferObject, bufferArray);
             toJson(TrainTypeEnum.class, bufferObject, bufferArray);
             toJson(SeatTypeEnum.class, bufferObject, bufferArray);
+            toJson(SeatColEnum.class, bufferObject, bufferArray);
 
             StringBuffer buffer = bufferObject.append("\r\n").append(bufferArray);
             writeJs(buffer);
