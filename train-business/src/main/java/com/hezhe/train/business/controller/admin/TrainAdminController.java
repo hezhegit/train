@@ -1,15 +1,16 @@
 package com.hezhe.train.business.controller.admin;
 
-import com.hezhe.train.common.context.LoginMemberContext;
-import com.hezhe.train.common.resp.PageResp;
-import com.hezhe.train.common.resp.Result;
 import com.hezhe.train.business.req.TrainQueryReq;
 import com.hezhe.train.business.req.TrainSaveReq;
 import com.hezhe.train.business.resp.TrainQueryResp;
 import com.hezhe.train.business.service.TrainService;
+import com.hezhe.train.common.resp.PageResp;
+import com.hezhe.train.common.resp.Result;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/train")
@@ -35,5 +36,11 @@ public class TrainAdminController {
     public Result delete(@PathVariable Long id) {
         trainService.deleteById(id);
         return Result.ok();
+    }
+
+    @GetMapping("/query-all")
+    public Result queryList() {
+        List<TrainQueryResp> trainQueryResps = trainService.queryAll();
+        return Result.ok().data("content", trainQueryResps);
     }
 }
