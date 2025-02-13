@@ -27,7 +27,6 @@ public class ${Domain}Controller {
 
     @GetMapping("/query-list")
     public Result queryList(@Valid ${Domain}QueryReq req) {
-        req.setMemberId(LoginMemberContext.getId());
         PageResp<${Domain}QueryResp> ${domain}QueryRespPageResp = ${domain}Service.queryList(req);
         return Result.ok().data("content", ${domain}QueryRespPageResp);
     }
