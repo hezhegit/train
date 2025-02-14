@@ -1,0 +1,5 @@
+### 按车次生成车座功能
+POST http://localhost:8000/business/admin/train/gen-seat/D3
+Accept: application/json
+
+###

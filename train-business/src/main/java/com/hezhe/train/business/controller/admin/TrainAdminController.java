@@ -3,6 +3,7 @@ package com.hezhe.train.business.controller.admin;
 import com.hezhe.train.business.req.TrainQueryReq;
 import com.hezhe.train.business.req.TrainSaveReq;
 import com.hezhe.train.business.resp.TrainQueryResp;
+import com.hezhe.train.business.service.TrainSeatService;
 import com.hezhe.train.business.service.TrainService;
 import com.hezhe.train.common.resp.PageResp;
 import com.hezhe.train.common.resp.Result;
@@ -18,6 +19,9 @@ public class TrainAdminController {
 
     @Resource
     private TrainService trainService;
+
+    @Resource
+    private TrainSeatService trainSeatService;
 
 
     @PostMapping("/save")
@@ -42,5 +46,11 @@ public class TrainAdminController {
     public Result queryList() {
         List<TrainQueryResp> trainQueryResps = trainService.queryAll();
         return Result.ok().data("content", trainQueryResps);
+    }
+
+    @PostMapping("/gen-seat/{trainCode}")
+    public Result genSeat(@PathVariable String trainCode) {
+        trainSeatService.genTrainSeat(trainCode);
+        return Result.ok();
     }
 }

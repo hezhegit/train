@@ -80,4 +80,11 @@ public class TrainCarriageService {
     public void deleteById(Long id) {
         trainCarriageMapper.deleteByPrimaryKey(id);
     }
+
+    public List<TrainCarriage> selectByTrainCode(String trainCode) {
+        TrainCarriageExample example = new TrainCarriageExample();
+        example.setOrderByClause("`index` asc");
+        example.createCriteria().andTrainCodeEqualTo(trainCode);
+        return trainCarriageMapper.selectByExample(example);
+    }
 }
