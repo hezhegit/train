@@ -10,6 +10,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/admin/station")
 public class StationAdminController {
@@ -34,5 +36,11 @@ public class StationAdminController {
     public Result delete(@PathVariable Long id) {
         stationService.deleteById(id);
         return Result.ok();
+    }
+
+    @GetMapping("/query-all")
+    public Result queryList() {
+        List<StationQueryResp> stationQueryResps = stationService.queryAll();
+        return Result.ok().data("content", stationQueryResps);
     }
 }
