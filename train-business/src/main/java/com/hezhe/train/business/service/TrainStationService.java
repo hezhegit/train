@@ -52,9 +52,13 @@ public class TrainStationService {
 
     public PageResp<TrainStationQueryResp> queryList(TrainStationQueryReq req) {
         TrainStationExample example = new TrainStationExample();
-        // id 倒序
-        example.setOrderByClause("id desc");
+        example.setOrderByClause("train_code asc, `index` asc");
         TrainStationExample.Criteria criteria = example.createCriteria();
+
+        if (ObjectUtil.isNotNull(req.getTrainCode())) {
+            criteria.andTrainCodeEqualTo(req.getTrainCode());
+        }
+
         LOG.info("查询页码：{}", req.getPage());
         LOG.info("每页条数：{}", req.getSize());
         PageHelper.startPage(req.getPage(), req.getSize());
