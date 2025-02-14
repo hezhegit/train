@@ -17,7 +17,9 @@ import {notification} from "ant-design-vue";
 
 export default defineComponent({
   name: "train-select-view",
+  // 接收父组件的参数
   props: ["modelValue", "width"],
+  // 父子组件的事件传递
   emits: ['update:modelValue', 'change'],
   setup(props, {emit}) {
     const trainCode = ref();
@@ -61,7 +63,9 @@ export default defineComponent({
      * @param value
      */
     const onChange = (value) => {
+      // 传递值给父组件
       emit('update:modelValue', value);
+      // 传递方法给父组件： @change
       let train = trains.value.filter(item => item.code === value)[0];
       if (Tool.isEmpty(train)) {
         train = {};
