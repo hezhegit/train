@@ -39,6 +39,17 @@ public enum ResultCode implements CustomizeResultCode{
     STATION_NOT_EXIST(3007, "车站不存在"),
     STATION_ALREADY_EXIST(3008, "车站已存在"),
 
+    /* 火车车站错误 */
+    TRAIN_STATION_INDEX_ALREADY_EXIST(4007, "同车次站序已存在"),
+    TRAIN_STATION_NAME_ALREADY_EXIST(4008, "同车次站名已存在"),
+
+    /* 车次错误 */
+    TRAIN_NOT_EXIST(5007, "车次编号不存在"),
+    TRAIN_ALREADY_EXIST(5008, "车次编号已存在"),
+
+    /* 车厢错误 */
+    TRAIN_CARRIAGE_INDEX_ALREADY_EXIST(6007, "同车次厢号已存在"),
+
     /* 业务错误 */
     NO_PERMISSION(3001, "没有权限"),
 

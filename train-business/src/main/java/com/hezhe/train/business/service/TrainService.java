@@ -1,18 +1,21 @@
 package com.hezhe.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hezhe.train.common.resp.PageResp;
-import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.business.domain.Train;
 import com.hezhe.train.business.domain.TrainExample;
 import com.hezhe.train.business.mapper.TrainMapper;
 import com.hezhe.train.business.req.TrainQueryReq;
 import com.hezhe.train.business.req.TrainSaveReq;
 import com.hezhe.train.business.resp.TrainQueryResp;
+import com.hezhe.train.common.exception.BusinessException;
+import com.hezhe.train.common.resp.PageResp;
+import com.hezhe.train.common.resp.ResultCode;
+import com.hezhe.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,14 @@ public class TrainService {
 
         if (ObjectUtil.isNull(req.getId())) {
             // 新增
+
+            // 新增前 需要校验唯一健是否已经存在
+            Train trainDB = selectByUnique(train.getCode());
+
+            if (ObjectUtil.isNotEmpty(trainDB)) {
+                throw new BusinessException(ResultCode.TRAIN_ALREADY_EXIST.getCode(), ResultCode.TRAIN_ALREADY_EXIST.getMessage());
+            }
+
             train.setId(SnowUtil.getSnowflakeNextId());
             train.setCreateTime(now);
             train.setUpdateTime(now);
@@ -48,6 +59,17 @@ public class TrainService {
 
 
 
+    }
+
+    private Train selectByUnique(String code) {
+        TrainExample example = new TrainExample();
+        TrainExample.Criteria criteria = example.createCriteria();
+        criteria.andCodeEqualTo(code);
+        List<Train> list = trainMapper.selectByExample(example);
+        if (CollUtil.isNotEmpty(list)) {
+            return list.get(0);
+        }
+        return null;
     }
 
     public PageResp<TrainQueryResp> queryList(TrainQueryReq req) {

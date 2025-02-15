@@ -1,18 +1,21 @@
 package com.hezhe.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hezhe.train.common.resp.PageResp;
-import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.business.domain.TrainStation;
 import com.hezhe.train.business.domain.TrainStationExample;
 import com.hezhe.train.business.mapper.TrainStationMapper;
 import com.hezhe.train.business.req.TrainStationQueryReq;
 import com.hezhe.train.business.req.TrainStationSaveReq;
 import com.hezhe.train.business.resp.TrainStationQueryResp;
+import com.hezhe.train.common.exception.BusinessException;
+import com.hezhe.train.common.resp.PageResp;
+import com.hezhe.train.common.resp.ResultCode;
+import com.hezhe.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,20 @@ public class TrainStationService {
 
         if (ObjectUtil.isNull(req.getId())) {
             // 新增
+
+            // 新增前 需要校验唯一健是否已经存在
+            TrainStation trainStationDB = selectByUnique(trainStation.getTrainCode(),trainStation.getIndex());
+            if (ObjectUtil.isNotEmpty(trainStationDB)) {
+                throw new BusinessException(ResultCode.TRAIN_STATION_INDEX_ALREADY_EXIST.getCode(), ResultCode.TRAIN_STATION_INDEX_ALREADY_EXIST.getMessage());
+            }
+
+            // 新增前 需要校验唯一健是否已经存在
+            trainStationDB = selectByUnique(trainStation.getTrainCode(),trainStation.getName());
+            if (ObjectUtil.isNotEmpty(trainStationDB)) {
+                throw new BusinessException(ResultCode.TRAIN_STATION_NAME_ALREADY_EXIST.getCode(), ResultCode.TRAIN_STATION_NAME_ALREADY_EXIST.getMessage());
+            }
+
+
             trainStation.setId(SnowUtil.getSnowflakeNextId());
             trainStation.setCreateTime(now);
             trainStation.setUpdateTime(now);
@@ -49,6 +66,31 @@ public class TrainStationService {
 
 
     }
+
+    private TrainStation selectByUnique(String trainCode, Integer index) {
+        TrainStationExample example = new TrainStationExample();
+        TrainStationExample.Criteria criteria = example.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode)
+                .andIndexEqualTo(index);
+        List<TrainStation> list = trainStationMapper.selectByExample(example);
+        if (CollUtil.isNotEmpty(list)) {
+            return list.get(0);
+        }
+        return null;
+    }
+
+    private TrainStation selectByUnique(String trainCode, String name) {
+        TrainStationExample example = new TrainStationExample();
+        TrainStationExample.Criteria criteria = example.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode)
+                .andNameEqualTo(name);
+        List<TrainStation> list = trainStationMapper.selectByExample(example);
+        if (CollUtil.isNotEmpty(list)) {
+            return list.get(0);
+        }
+        return null;
+    }
+
 
     public PageResp<TrainStationQueryResp> queryList(TrainStationQueryReq req) {
         TrainStationExample example = new TrainStationExample();
