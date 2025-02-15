@@ -39,13 +39,11 @@ public class StationService {
             // 新增
 
             // 新增前 需要校验唯一健是否已经存在
-            StationExample example = new StationExample();
-            StationExample.Criteria criteria = example.createCriteria();
-            criteria.andNameEqualTo(station.getName());
-            List<Station> list = stationMapper.selectByExample(example);
-            if (CollUtil.isNotEmpty(list)) {
+            Station stationDB = selectByUnique(station.getName());
+            if (ObjectUtil.isNotEmpty(stationDB)) {
                 throw new BusinessException(ResultCode.STATION_ALREADY_EXIST.getCode(), ResultCode.STATION_ALREADY_EXIST.getMessage());
             }
+
             station.setId(SnowUtil.getSnowflakeNextId());
             station.setCreateTime(now);
             station.setUpdateTime(now);
@@ -60,6 +58,17 @@ public class StationService {
 
 
 
+    }
+
+    private Station selectByUnique(String name) {
+        StationExample example = new StationExample();
+        StationExample.Criteria criteria = example.createCriteria();
+        criteria.andNameEqualTo(name);
+        List<Station> list = stationMapper.selectByExample(example);
+        if (CollUtil.isNotEmpty(list)) {
+            return list.get(0);
+        }
+        return null;
     }
 
     public PageResp<StationQueryResp> queryList(StationQueryReq req) {
