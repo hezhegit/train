@@ -1,6 +1,7 @@
 package com.hezhe.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
@@ -8,7 +9,9 @@ import com.github.pagehelper.PageInfo;
 import com.hezhe.train.business.domain.Station;
 import com.hezhe.train.business.domain.StationExample;
 import com.hezhe.train.business.resp.StationQueryResp;
+import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.PageResp;
+import com.hezhe.train.common.resp.ResultCode;
 import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.business.mapper.StationMapper;
 import com.hezhe.train.business.req.StationQueryReq;
@@ -34,6 +37,15 @@ public class StationService {
 
         if (ObjectUtil.isNull(req.getId())) {
             // 新增
+
+            // 新增前 需要校验唯一健是否已经存在
+            StationExample example = new StationExample();
+            StationExample.Criteria criteria = example.createCriteria();
+            criteria.andNameEqualTo(station.getName());
+            List<Station> list = stationMapper.selectByExample(example);
+            if (CollUtil.isNotEmpty(list)) {
+                throw new BusinessException(ResultCode.STATION_ALREADY_EXIST.getCode(), ResultCode.STATION_ALREADY_EXIST.getMessage());
+            }
             station.setId(SnowUtil.getSnowflakeNextId());
             station.setCreateTime(now);
             station.setUpdateTime(now);

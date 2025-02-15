@@ -35,9 +35,9 @@ public enum ResultCode implements CustomizeResultCode{
     USER_MOBILE_NOT_EXIST(2010, "请先获取短信验证码"),
     USER_MOBILE_CODE_ERROR(2011, "验证码错误"),
 
-    /*部门错误*/
-    DEPARTMENT_NOT_EXIST(3007, "部门不存在"),
-    DEPARTMENT_ALREADY_EXIST(3008, "部门已存在"),
+    /* 车站错误 */
+    STATION_NOT_EXIST(3007, "车站不存在"),
+    STATION_ALREADY_EXIST(3008, "车站已存在"),
 
     /* 业务错误 */
     NO_PERMISSION(3001, "没有权限"),
