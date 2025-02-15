@@ -29,6 +29,7 @@
         <module>train-gateway</module>
         <module>generator</module>
         <module>train-business</module>
+        <module>train-batch</module>
     </modules>
     <scm>
         <connection/>
