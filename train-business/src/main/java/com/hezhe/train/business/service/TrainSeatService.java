@@ -7,15 +7,15 @@ import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hezhe.train.business.domain.TrainCarriage;
-import com.hezhe.train.business.enums.SeatColEnum;
-import com.hezhe.train.common.resp.PageResp;
-import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.business.domain.TrainSeat;
 import com.hezhe.train.business.domain.TrainSeatExample;
+import com.hezhe.train.business.enums.SeatColEnum;
 import com.hezhe.train.business.mapper.TrainSeatMapper;
 import com.hezhe.train.business.req.TrainSeatQueryReq;
 import com.hezhe.train.business.req.TrainSeatSaveReq;
 import com.hezhe.train.business.resp.TrainSeatQueryResp;
+import com.hezhe.train.common.resp.PageResp;
+import com.hezhe.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,5 +141,12 @@ public class TrainSeatService {
         }
 
 
+    }
+
+    public List<TrainSeat> selectByTrainCode(String trainCode) {
+        TrainSeatExample example = new TrainSeatExample();
+        example.setOrderByClause("`id` asc");
+        example.createCriteria().andTrainCodeEqualTo(trainCode);
+        return trainSeatMapper.selectByExample(example);
     }
 }
