@@ -2,14 +2,19 @@ package com.hezhe.train.business.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hezhe.train.business.domain.DailyTrainTicket;
 import com.hezhe.train.business.enums.ConfirmOrderStatusEnum;
+import com.hezhe.train.business.enums.SeatTypeEnum;
+import com.hezhe.train.business.req.ConfirmOrderTicketReq;
 import com.hezhe.train.common.context.LoginMemberContext;
+import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.PageResp;
+import com.hezhe.train.common.resp.ResultCode;
 import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.business.domain.ConfirmOrder;
 import com.hezhe.train.business.domain.ConfirmOrderExample;
@@ -108,7 +113,51 @@ public class ConfirmOrderService {
         confirmOrderMapper.insert(confirmOrder);
 
         // 查询余票记录， 需要得到真实的库存
-        DailyTrainTicket ticket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);
-        LOG.info("查出余票记录：{}", ticket);
+        DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);
+        LOG.info("查出余票记录：{}", dailyTrainTicket);
+
+        // 预扣减 余票数量， 判断余票是否足够
+        reduceTickets(req, dailyTrainTicket);
+    }
+
+    private static void reduceTickets(ConfirmOrderDoReq req, DailyTrainTicket dailyTrainTicket) {
+        for (ConfirmOrderTicketReq reqTicket : req.getTickets()) {
+            String seatTypeCode = reqTicket.getSeatTypeCode();
+            SeatTypeEnum seatTypeEnum = EnumUtil.getBy(SeatTypeEnum::getCode, seatTypeCode);
+            switch (seatTypeEnum) {
+                case YDZ -> {
+                    int countLeft = dailyTrainTicket.getYdz() - 1;
+                    if (countLeft < 0) {
+                        throw new BusinessException(ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getCode(), ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getMessage());
+                    }
+                    dailyTrainTicket.setYdz(countLeft);
+
+                }
+                case EDZ -> {
+                    int countLeft = dailyTrainTicket.getEdz() - 1;
+                    if (countLeft < 0) {
+                        throw new BusinessException(ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getCode(), ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getMessage());
+                    }
+                    dailyTrainTicket.setYdz(countLeft);
+
+                }
+                case RW -> {
+                    int countLeft = dailyTrainTicket.getRw() - 1;
+                    if (countLeft < 0) {
+                        throw new BusinessException(ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getCode(), ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getMessage());
+                    }
+                    dailyTrainTicket.setYdz(countLeft);
+
+                }
+                case YW -> {
+                    int countLeft = dailyTrainTicket.getYw() - 1;
+                    if (countLeft < 0) {
+                        throw new BusinessException(ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getCode(), ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getMessage());
+                    }
+                    dailyTrainTicket.setYdz(countLeft);
+
+                }
+            }
+        }
     }
 }

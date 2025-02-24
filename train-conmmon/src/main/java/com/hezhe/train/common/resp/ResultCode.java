@@ -53,6 +53,10 @@ public enum ResultCode implements CustomizeResultCode{
     /* 业务错误 */
     NO_PERMISSION(3001, "没有权限"),
 
+    /* 订单错误 */
+    CONFIRM_ORDER_TICKET_COUNT_ERROR(7001, "余票不足"),
+
+
     /*运行时异常*/
     ARITHMETIC_EXCEPTION(9001,"算数异常");
 
