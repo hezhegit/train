@@ -11,6 +11,8 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/passenger")
 public class PassengerController {
@@ -37,4 +39,11 @@ public class PassengerController {
         passengerService.deleteById(id);
         return Result.ok();
     }
+
+    @GetMapping("/query-mine")
+    public Result queryMine() {
+        List<PassengerQueryResp> passengerQueryResps = passengerService.queryMine();
+        return Result.ok().data("content", passengerQueryResps);
+    }
+
 }

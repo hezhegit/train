@@ -79,4 +79,17 @@ public class PassengerService {
     public void deleteById(Long id) {
         passengerMapper.deleteByPrimaryKey(id);
     }
+
+
+    /* *
+    * 查找我的所有乘客
+    * */
+    public List<PassengerQueryResp> queryMine() {
+        PassengerExample example = new PassengerExample();
+        example.setOrderByClause("name asc");
+        PassengerExample.Criteria criteria = example.createCriteria();
+        criteria.andMemberIdEqualTo(LoginMemberContext.getId());
+        List<Passenger> passengers = passengerMapper.selectByExample(example);
+        return BeanUtil.copyToList(passengers, PassengerQueryResp.class);
+    }
 }
