@@ -8,10 +8,7 @@ import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.hezhe.train.business.domain.DailyTrain;
-import com.hezhe.train.business.domain.DailyTrainTicket;
-import com.hezhe.train.business.domain.DailyTrainTicketExample;
-import com.hezhe.train.business.domain.TrainStation;
+import com.hezhe.train.business.domain.*;
 import com.hezhe.train.business.enums.SeatTypeEnum;
 import com.hezhe.train.business.enums.TrainTypeEnum;
 import com.hezhe.train.business.mapper.DailyTrainTicketMapper;
@@ -175,5 +172,19 @@ public class DailyTrainTicketService {
 
         LOG.info("开始生成日期：【{}】 === 车次：【{}】 的余票信息==结束==", DateUtil.formatDate(date), trainCode);
 
+    }
+
+    public DailyTrainTicket selectByUnique(Date date, String trainCode, String start, String end) {
+        DailyTrainTicketExample example = new DailyTrainTicketExample();
+        DailyTrainTicketExample.Criteria criteria = example.createCriteria();
+        criteria.andDateEqualTo(date)
+                .andTrainCodeEqualTo(trainCode)
+                .andStartEqualTo(start)
+                .andEndEqualTo(end);
+        List<DailyTrainTicket> list = dailyTrainTicketMapper.selectByExample(example);
+        if (CollUtil.isNotEmpty(list)) {
+            return list.get(0);
+        }
+        return null;
     }
 }
