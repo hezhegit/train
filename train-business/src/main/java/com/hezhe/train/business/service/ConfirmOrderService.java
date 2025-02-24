@@ -138,7 +138,7 @@ public class ConfirmOrderService {
                     if (countLeft < 0) {
                         throw new BusinessException(ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getCode(), ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getMessage());
                     }
-                    dailyTrainTicket.setYdz(countLeft);
+                    dailyTrainTicket.setEdz(countLeft);
 
                 }
                 case RW -> {
@@ -146,7 +146,7 @@ public class ConfirmOrderService {
                     if (countLeft < 0) {
                         throw new BusinessException(ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getCode(), ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getMessage());
                     }
-                    dailyTrainTicket.setYdz(countLeft);
+                    dailyTrainTicket.setRw(countLeft);
 
                 }
                 case YW -> {
@@ -154,7 +154,7 @@ public class ConfirmOrderService {
                     if (countLeft < 0) {
                         throw new BusinessException(ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getCode(), ResultCode.CONFIRM_ORDER_TICKET_COUNT_ERROR.getMessage());
                     }
-                    dailyTrainTicket.setYdz(countLeft);
+                    dailyTrainTicket.setYw(countLeft);
 
                 }
             }
