@@ -49,6 +49,9 @@ public class ConfirmOrderService {
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
 
+    @Resource
+    private AfterConfirmOrderService afterConfirmOrderService;
+
 
 
     public void save(ConfirmOrderDoReq req) {
@@ -183,6 +186,8 @@ public class ConfirmOrderService {
 
         LOG.info("最终的选座：{}", finalSeatList);
 
+        // 选中座位后的处理
+        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList);
 
     }
 
@@ -195,7 +200,7 @@ public class ConfirmOrderService {
      * @param offsetList
      */
     private void getSeat(List<DailyTrainSeat> finalSeatList, Date date, String trainCode, String seatType, String column, List<Integer> offsetList, Integer startIndex, Integer endIndex) {
-        List<DailyTrainSeat> getSeatList = new ArrayList<>();
+        List<DailyTrainSeat> getSeatList;
         List<DailyTrainCarriage> carriageList = dailyTrainCarriageService.selectBySeatType(date, trainCode, seatType);
         LOG.info("共查出 {} 个符合条件的车厢", carriageList.size());
 
