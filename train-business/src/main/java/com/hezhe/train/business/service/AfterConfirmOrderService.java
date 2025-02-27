@@ -1,8 +1,11 @@
 package com.hezhe.train.business.service;
 
+import com.hezhe.train.business.domain.ConfirmOrder;
 import com.hezhe.train.business.domain.DailyTrainSeat;
 import com.hezhe.train.business.domain.DailyTrainTicket;
+import com.hezhe.train.business.enums.ConfirmOrderStatusEnum;
 import com.hezhe.train.business.feign.MemberFeign;
+import com.hezhe.train.business.mapper.ConfirmOrderMapper;
 import com.hezhe.train.business.mapper.DailyTrainSeatMapper;
 import com.hezhe.train.business.mapper.cust.DailyTrainTicketMapperCust;
 import com.hezhe.train.business.req.ConfirmOrderTicketReq;
@@ -32,6 +35,9 @@ public class AfterConfirmOrderService {
     @Resource
     private MemberFeign memberFeign;
 
+    @Resource
+    private ConfirmOrderMapper confirmOrderMapper;
+
 
 
 
@@ -43,7 +49,7 @@ public class AfterConfirmOrderService {
      *  更新确认订单为成功
      */
     @Transactional
-    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets) {
+    public void afterDoConfirm(DailyTrainTicket dailyTrainTicket, List<DailyTrainSeat> finalSeatList, List<ConfirmOrderTicketReq> tickets, ConfirmOrder confirmOrder) {
 
         for (int j = 0; j < finalSeatList.size(); j++) {
             DailyTrainSeat dailyTrainSeat = finalSeatList.get(j);
@@ -114,6 +120,14 @@ public class AfterConfirmOrderService {
             memberTicketReq.setSeatType(dailyTrainSeat.getSeatType());
             Result save = memberFeign.save(memberTicketReq);
             LOG.info("调用member接口，返回：{}", save);
+
+            // 更新订单状态为成功
+            ConfirmOrder confirmOrderForUpdate = new ConfirmOrder();
+            confirmOrderForUpdate.setId(confirmOrder.getId());
+            confirmOrderForUpdate.setUpdateTime(new Date());
+            confirmOrderForUpdate.setStatus(ConfirmOrderStatusEnum.SUCCESS.getCode());
+            confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderForUpdate);
+
 
 
         }
