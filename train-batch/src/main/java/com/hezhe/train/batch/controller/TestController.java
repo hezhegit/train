@@ -13,6 +13,6 @@ public class TestController {
 
     @GetMapping("/hello")
     public String hello() {
-        return businessFeign.hello()+" === BusinessFeign TEST!";
+        return " === BusinessFeign TEST! ==="+ businessFeign.hello();
     }
 }
