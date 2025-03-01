@@ -187,7 +187,14 @@ public class ConfirmOrderService {
         LOG.info("最终的选座：{}", finalSeatList);
 
         // 选中座位后的处理
-        afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
+        try {
+            afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
+
+        }catch (Exception e) {
+            LOG.error("保存购票信息失败", e);
+            throw new BusinessException(ResultCode.CONFIRM_ORDER_EXCEPTION.getCode(), ResultCode.CONFIRM_ORDER_EXCEPTION.getMessage());
+
+        }
 
     }
 
