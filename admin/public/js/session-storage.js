@@ -2,6 +2,8 @@
 SESSION_ORDER = "SESSION_ORDER";
 SESSION_TICKET_PARAMS = "SESSION_TICKET_PARAMS";
 
+SESSION_ALL_TRAIN = "SESSION_ALL_TRAIN";
+
 SessionStorage = {
     get: function (key) {
         // sessionStorage：只对当前会话有效，关闭浏览器失效
