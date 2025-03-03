@@ -14,24 +14,26 @@ import com.hezhe.train.business.domain.*;
 import com.hezhe.train.business.enums.ConfirmOrderStatusEnum;
 import com.hezhe.train.business.enums.SeatColEnum;
 import com.hezhe.train.business.enums.SeatTypeEnum;
+import com.hezhe.train.business.mapper.ConfirmOrderMapper;
+import com.hezhe.train.business.req.ConfirmOrderDoReq;
+import com.hezhe.train.business.req.ConfirmOrderQueryReq;
 import com.hezhe.train.business.req.ConfirmOrderTicketReq;
+import com.hezhe.train.business.resp.ConfirmOrderQueryResp;
 import com.hezhe.train.common.context.LoginMemberContext;
 import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.PageResp;
 import com.hezhe.train.common.resp.ResultCode;
 import com.hezhe.train.common.util.SnowUtil;
-import com.hezhe.train.business.mapper.ConfirmOrderMapper;
-import com.hezhe.train.business.req.ConfirmOrderQueryReq;
-import com.hezhe.train.business.req.ConfirmOrderDoReq;
-import com.hezhe.train.business.resp.ConfirmOrderQueryResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ConfirmOrderService {
@@ -51,6 +53,9 @@ public class ConfirmOrderService {
 
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
+
+    @Resource
+    private StringRedisTemplate redisTemplate;
 
 
 
@@ -102,6 +107,17 @@ public class ConfirmOrderService {
     }
 
     public void doConfirm(ConfirmOrderDoReq req) {
+        // 锁：日期+车次
+        String key = req.getDate() + "-" + req.getTrainCode();
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 5, TimeUnit.SECONDS);
+        if (setIfAbsent) {
+            LOG.info("恭喜，抢到锁了！");
+        }else {
+            LOG.info("很遗憾，没抢到锁。");
+
+            throw new BusinessException(ResultCode.CONFIRM_ORDER_LOCK_FAIL.getCode(), ResultCode.CONFIRM_ORDER_LOCK_FAIL.getMessage());
+        }
+
         // 省略 业务校验：车次是否存在，余票是否存在，车次是否在有效期内等
 
         // 数据保存到订单表
