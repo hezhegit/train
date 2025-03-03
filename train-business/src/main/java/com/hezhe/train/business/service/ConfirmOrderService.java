@@ -7,6 +7,7 @@ import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -59,6 +60,7 @@ public class ConfirmOrderService {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
+
     @Autowired
     private RedissonClient redissonClient;
 
@@ -111,6 +113,7 @@ public class ConfirmOrderService {
         confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
+    @SentinelResource("doConfirm")
     public void doConfirm(ConfirmOrderDoReq req) {
         // 锁：日期+车次
         String lockKey = req.getDate() + "-" + req.getTrainCode();
@@ -125,6 +128,13 @@ public class ConfirmOrderService {
 //        }
 
         RLock lock = null;
+         /*
+            关于红锁（奇数台），看16.7节：
+            A B C D E
+            1: A B C D E
+            2: C D E
+            3: C
+        */
         try {
             // 使用redisson 自带看门狗， 守护线程
             lock = redissonClient.getLock(lockKey);
