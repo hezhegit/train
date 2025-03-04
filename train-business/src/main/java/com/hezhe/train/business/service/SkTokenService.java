@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.hezhe.train.business.mapper.cust.SkTokenMapperCust;
 import com.hezhe.train.common.resp.PageResp;
 import com.hezhe.train.common.util.SnowUtil;
 import com.hezhe.train.business.domain.SkToken;
@@ -35,6 +36,8 @@ public class SkTokenService {
 
     @Resource
     private DailyTrainStationService dailyTrainStationService;
+    @Resource
+    private SkTokenMapperCust skTokenMapperCust;
 
 
 
@@ -114,5 +117,18 @@ public class SkTokenService {
 
     public void deleteById(Long id) {
         skTokenMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 校验令牌
+     */
+    public boolean validSkToken(Date date, String trainCode, Long memberId) {
+         // 令牌约等于库存，令牌没有了，就不再卖票，不需要再进入购票主流程去判断库存，判断令牌肯定比判断库存效率高
+         int updateCount = skTokenMapperCust.decrease(date, trainCode, 1);
+         if (updateCount > 0) {
+             return true;
+         } else {
+             return false;
+         }
     }
 }

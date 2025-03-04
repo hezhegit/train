@@ -66,6 +66,10 @@ public class ConfirmOrderService {
     private RedissonClient redissonClient;
 
 
+    @Resource
+    private SkTokenService skTokenService;
+
+
 
     public void save(ConfirmOrderDoReq req) {
         DateTime now = DateTime.now();
@@ -116,6 +120,17 @@ public class ConfirmOrderService {
 
     @SentinelResource(value = "doConfirm", blockHandler = "doConfirmBlock")
     public void doConfirm(ConfirmOrderDoReq req) {
+
+         // 校验令牌余量
+         boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
+         if (validSkToken) {
+             LOG.info("令牌校验通过");
+         } else {
+             LOG.info("令牌校验不通过");
+            throw new BusinessException(ResultCode.CONFIRM_ORDER_SK_TOKEN_FAIL.getCode(), ResultCode.CONFIRM_ORDER_SK_TOKEN_FAIL.getMessage());
+         }
+
+
         // 锁：日期+车次
         String lockKey = req.getDate() + "-" + req.getTrainCode();
         // setIfAbsent: setnx
