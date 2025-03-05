@@ -378,15 +378,15 @@ export default defineComponent({
         start: dailyTrainTicket.start,
         end: dailyTrainTicket.end,
         tickets: tickets.value,
-        // imageCodeToken: imageCodeToken.value,
-        // imageCode: imageCode.value,
+        imageCodeToken: imageCodeToken.value,
+        imageCode: imageCode.value,
         // lineNumber: lineNumber.value
       }).then((response) => {
         let data = response.data;
         if (data.success) {
           notification.success({description: "下单成功！"});
-          // visible.value = false;
-          // imageCodeModalVisible.value = false;
+          visible.value = false;
+          imageCodeModalVisible.value = false;
           // lineModalVisible.value = true;
           // confirmOrderId.value = data.content;
           // queryLineCount();
