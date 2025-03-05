@@ -1,7 +1,7 @@
 package com.hezhe.train.business.controller;
 
 import com.hezhe.train.business.req.ConfirmOrderDoReq;
-import com.hezhe.train.business.service.ConfirmOrderService;
+import com.hezhe.train.business.service.BeforeConfirmOrderService;
 import com.hezhe.train.common.resp.Result;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConfirmOrderController {
 
     @Resource
-    private ConfirmOrderService confirmOrderService;
+    private BeforeConfirmOrderService beforeConfirmOrderService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -44,7 +44,8 @@ public class ConfirmOrderController {
             // 验证通过后，移除验证码
             redisTemplate.delete(imageCodeToken);
         }
-        confirmOrderService.doConfirm(req);
+
+        beforeConfirmOrderService.beforeDoConfirm(req);
         return Result.ok();
     }
 
