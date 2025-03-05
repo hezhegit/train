@@ -3,6 +3,7 @@ package com.hezhe.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -14,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hezhe.train.business.domain.*;
 import com.hezhe.train.business.enums.ConfirmOrderStatusEnum;
+import com.hezhe.train.business.enums.RedisKeyPreEnum;
 import com.hezhe.train.business.enums.SeatColEnum;
 import com.hezhe.train.business.enums.SeatTypeEnum;
 import com.hezhe.train.business.mapper.ConfirmOrderMapper;
@@ -132,7 +134,7 @@ public class ConfirmOrderService {
 
 
         // 锁：日期+车次
-        String lockKey = req.getDate() + "-" + req.getTrainCode();
+        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
         // setIfAbsent: setnx
 //        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
 //        if (setIfAbsent) {

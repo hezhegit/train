@@ -58,7 +58,7 @@ public enum ResultCode implements CustomizeResultCode{
     CONFIRM_ORDER_EXCEPTION(7002, "服务器繁忙，请稍后重试！"),
     CONFIRM_ORDER_LOCK_FAIL(7003, "当前抢票人数多，请稍后重试！"),
     CONFIRM_ORDER_FLOW_EXCEPTION(7004, "当前抢票人数多，请稍后重试！"),
-    CONFIRM_ORDER_SK_TOKEN_FAIL(7005, "票已卖光！"),
+    CONFIRM_ORDER_SK_TOKEN_FAIL(7005, "当前抢票人数太多， 请5秒后重试！"),
 
 
     /*运行时异常*/
