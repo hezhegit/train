@@ -2,6 +2,7 @@ package com.hezhe.train.business.controller;
 
 import com.hezhe.train.business.req.ConfirmOrderDoReq;
 import com.hezhe.train.business.service.BeforeConfirmOrderService;
+import com.hezhe.train.business.service.ConfirmOrderService;
 import com.hezhe.train.common.resp.Result;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -10,10 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/confirm-order")
@@ -21,6 +19,9 @@ public class ConfirmOrderController {
 
     @Resource
     private BeforeConfirmOrderService beforeConfirmOrderService;
+
+    @Resource
+    private ConfirmOrderService confirmOrderService;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -45,8 +46,14 @@ public class ConfirmOrderController {
             redisTemplate.delete(imageCodeToken);
         }
 
-        beforeConfirmOrderService.beforeDoConfirm(req);
-        return Result.ok();
+        Long id = beforeConfirmOrderService.beforeDoConfirm(req);
+        return Result.ok().data("id", String.valueOf(id));
+    }
+
+    @GetMapping("/query-line-count/{id}")
+    public Result queryLineCount(@PathVariable Long id) {
+        Integer count = confirmOrderService.queryLineCount(id);
+        return Result.ok().data("count", count);
     }
 
 }
