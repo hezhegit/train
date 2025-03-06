@@ -1,7 +1,7 @@
 package com.hezhe.train.business.mq;
 
 import com.alibaba.fastjson.JSON;
-import com.hezhe.train.business.req.ConfirmOrderDoReq;
+import com.hezhe.train.business.dto.ConfirmOrderMQDto;
 import com.hezhe.train.business.service.ConfirmOrderService;
 import jakarta.annotation.Resource;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -24,9 +24,9 @@ import org.springframework.stereotype.Service;
      @Override
      public void onMessage(MessageExt messageExt) {
          byte[] body = messageExt.getBody();
-         ConfirmOrderDoReq req = JSON.parseObject(new String(body), ConfirmOrderDoReq.class);
-         MDC.put("LOG_ID", req.getLogId());
+         ConfirmOrderMQDto dto = JSON.parseObject(new String(body), ConfirmOrderMQDto.class);
+         MDC.put("LOG_ID", dto.getLogId());
          LOG.info("ROCKETMQ收到消息：{}", new String(body));
-         confirmOrderService.doConfirm(req);
+         confirmOrderService.doConfirm(dto);
      }
  }

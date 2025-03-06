@@ -24,4 +24,6 @@ public class BusinessException extends RuntimeException{
     public synchronized Throwable fillInStackTrace() {
         return this;
     }
+
+
 }
