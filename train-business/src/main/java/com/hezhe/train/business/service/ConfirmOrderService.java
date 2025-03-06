@@ -10,7 +10,6 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
-import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.hezhe.train.business.domain.*;
@@ -23,13 +22,11 @@ import com.hezhe.train.business.req.ConfirmOrderDoReq;
 import com.hezhe.train.business.req.ConfirmOrderQueryReq;
 import com.hezhe.train.business.req.ConfirmOrderTicketReq;
 import com.hezhe.train.business.resp.ConfirmOrderQueryResp;
-import com.hezhe.train.common.context.LoginMemberContext;
 import com.hezhe.train.common.exception.BusinessException;
 import com.hezhe.train.common.resp.PageResp;
 import com.hezhe.train.common.resp.ResultCode;
 import com.hezhe.train.common.util.SnowUtil;
 import jakarta.annotation.Resource;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,28 +121,28 @@ public class ConfirmOrderService {
     public void doConfirm(ConfirmOrderDoReq req) {
 
          // 校验令牌余量
-         boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
-         if (validSkToken) {
-             LOG.info("令牌校验通过");
-         } else {
-             LOG.info("令牌校验不通过");
-            throw new BusinessException(ResultCode.CONFIRM_ORDER_SK_TOKEN_FAIL.getCode(), ResultCode.CONFIRM_ORDER_SK_TOKEN_FAIL.getMessage());
-         }
-
-
-        // 锁：日期+车次
-        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
-        // setIfAbsent: setnx
-//        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
-//        if (setIfAbsent) {
-//            LOG.info("恭喜，抢到锁了！");
-//        }else {
-//            LOG.info("很遗憾，没抢到锁。");
+//         boolean validSkToken = skTokenService.validSkToken(req.getDate(), req.getTrainCode(), LoginMemberContext.getId());
+//         if (validSkToken) {
+//             LOG.info("令牌校验通过");
+//         } else {
+//             LOG.info("令牌校验不通过");
+//            throw new BusinessException(ResultCode.CONFIRM_ORDER_SK_TOKEN_FAIL.getCode(), ResultCode.CONFIRM_ORDER_SK_TOKEN_FAIL.getMessage());
+//         }
 //
-//            throw new BusinessException(ResultCode.CONFIRM_ORDER_LOCK_FAIL.getCode(), ResultCode.CONFIRM_ORDER_LOCK_FAIL.getMessage());
-//        }
+//
+//        // 分布式锁：日期+车次
+        String lockKey = RedisKeyPreEnum.CONFIRM_ORDER + "-" + DateUtil.formatDate(req.getDate()) + "-" + req.getTrainCode();
+//         setIfAbsent: setnx
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(lockKey, lockKey, 5, TimeUnit.SECONDS);
+        if (setIfAbsent) {
+            LOG.info("恭喜，抢到锁了！");
+        }else {
+            LOG.info("很遗憾，没抢到锁。");
 
-        RLock lock = null;
+            throw new BusinessException(ResultCode.CONFIRM_ORDER_LOCK_FAIL.getCode(), ResultCode.CONFIRM_ORDER_LOCK_FAIL.getMessage());
+        }
+
+//        RLock lock = null;
          /*
             关于红锁（奇数台），看16.7节：
             A B C D E
@@ -155,27 +152,27 @@ public class ConfirmOrderService {
         */
         try {
             // 使用redisson 自带看门狗， 守护线程
-            lock = redissonClient.getLock(lockKey);
-            /**
-             waitTime – the maximum time to acquire the lock 等待获取锁时间(最大尝试获得锁的时间)，超时返回false
-             leaseTime – lease time 锁时长，即n秒后自动释放锁
-             time unit – time unit 时间单位
-             */
-            // boolean tryLock = lock.tryLock(30, 10, TimeUnit.SECONDS); // 不带看门狗
-            boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS); // 带看门狗
-             if (tryLock) {
-                 LOG.info("恭喜，抢到锁了！");
-                 // 可以把下面这段放开，只用一个线程来测试，看看redisson的看门狗效果
-                 // for (int i = 0; i < 30; i++) {
-                 //     Long expire = redisTemplate.opsForValue().getOperations().getExpire(lockKey);
-                 //     LOG.info("锁过期时间还有：{}", expire);
-                 //     Thread.sleep(1000);
-                 // }
-             } else {
-                 // 只是没抢到锁，并不知道票抢完了没，所以提示稍候再试
-                 LOG.info("很遗憾，没抢到锁");
-                 throw new BusinessException(ResultCode.CONFIRM_ORDER_LOCK_FAIL.getCode(), ResultCode.CONFIRM_ORDER_LOCK_FAIL.getMessage());
-             }
+//            lock = redissonClient.getLock(lockKey);
+//            /**
+//             waitTime – the maximum time to acquire the lock 等待获取锁时间(最大尝试获得锁的时间)，超时返回false
+//             leaseTime – lease time 锁时长，即n秒后自动释放锁
+//             time unit – time unit 时间单位
+//             */
+//            // boolean tryLock = lock.tryLock(30, 10, TimeUnit.SECONDS); // 不带看门狗
+//            boolean tryLock = lock.tryLock(0, TimeUnit.SECONDS); // 带看门狗
+//             if (tryLock) {
+//                 LOG.info("恭喜，抢到锁了！");
+//                 // 可以把下面这段放开，只用一个线程来测试，看看redisson的看门狗效果
+//                 // for (int i = 0; i < 30; i++) {
+//                 //     Long expire = redisTemplate.opsForValue().getOperations().getExpire(lockKey);
+//                 //     LOG.info("锁过期时间还有：{}", expire);
+//                 //     Thread.sleep(1000);
+//                 // }
+//             } else {
+//                 // 只是没抢到锁，并不知道票抢完了没，所以提示稍候再试
+//                 LOG.info("很遗憾，没抢到锁");
+//                 throw new BusinessException(ResultCode.CONFIRM_ORDER_LOCK_FAIL.getCode(), ResultCode.CONFIRM_ORDER_LOCK_FAIL.getMessage());
+//             }
 
             // 省略 业务校验：车次是否存在，余票是否存在，车次是否在有效期内等
 
@@ -186,20 +183,38 @@ public class ConfirmOrderService {
             String start = req.getStart();
             String end = req.getEnd();
             List<ConfirmOrderTicketReq> tickets = req.getTickets();
-
+//
             ConfirmOrder confirmOrder = new ConfirmOrder();
-            confirmOrder.setId(SnowUtil.getSnowflakeNextId());
-            confirmOrder.setMemberId(LoginMemberContext.getId());
-            confirmOrder.setDate(date);
-            confirmOrder.setTrainCode(trainCode);
-            confirmOrder.setStart(start);
-            confirmOrder.setEnd(end);
-            confirmOrder.setDailyTrainTicketId(req.getDailyTrainTicketId());
-            confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
-            confirmOrder.setCreateTime(now);
-            confirmOrder.setUpdateTime(now);
-            confirmOrder.setTickets(JSON.toJSONString(tickets));
-            confirmOrderMapper.insert(confirmOrder);
+//            confirmOrder.setId(SnowUtil.getSnowflakeNextId());
+//            confirmOrder.setMemberId(req.getMemberId());
+//            confirmOrder.setDate(date);
+//            confirmOrder.setTrainCode(trainCode);
+//            confirmOrder.setStart(start);
+//            confirmOrder.setEnd(end);
+//            confirmOrder.setDailyTrainTicketId(req.getDailyTrainTicketId());
+//            confirmOrder.setStatus(ConfirmOrderStatusEnum.INIT.getCode());
+//            confirmOrder.setCreateTime(now);
+//            confirmOrder.setUpdateTime(now);
+//            confirmOrder.setTickets(JSON.toJSONString(tickets));
+//            confirmOrderMapper.insert(confirmOrder);
+            // 从数据库里面查询
+            // 取确认订单表的记录，同日期车次，状态是I，分页处理，每次取N条
+            ConfirmOrderExample confirmOrderExample = new ConfirmOrderExample();
+            confirmOrderExample.setOrderByClause("id asc");
+            ConfirmOrderExample.Criteria criteria = confirmOrderExample.createCriteria();
+            criteria.andDateEqualTo(req.getDate())
+                    .andTrainCodeEqualTo(req.getTrainCode())
+                    .andMemberIdEqualTo(req.getMemberId())
+                    .andStatusEqualTo(ConfirmOrderStatusEnum.INIT.getCode());
+            List<ConfirmOrder> list = confirmOrderMapper.selectByExampleWithBLOBs(confirmOrderExample);
+
+            if (CollUtil.isEmpty(list)) {
+                LOG.info("没有需要处理的订单，结束");
+                return;
+            } else {
+                LOG.info("本次处理{}条订单", list.size());
+                confirmOrder = list.get(0);
+            }
 
             // 查询余票记录， 需要得到真实的库存
             DailyTrainTicket dailyTrainTicket = dailyTrainTicketService.selectByUnique(date, trainCode, start, end);
@@ -273,13 +288,13 @@ public class ConfirmOrderService {
 //            // 删除分布式锁
 //            LOG.info("购票流程结束，释放锁。");
 //            redisTemplate.delete(lockKey);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             LOG.info("购票异常：{}", e.getMessage());
         }finally {
-            LOG.info("购票流程结束，释放锁。");
-            if (null != lock && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
+//            LOG.info("购票流程结束，释放锁。");
+//            if (null != lock && lock.isHeldByCurrentThread()) {
+//                lock.unlock();
+//            }
         }
 
 
